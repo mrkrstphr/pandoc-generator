@@ -7,7 +7,7 @@ fi
 
 cd src/
 
-pandoc --highlight-style tango --toc --toc-depth=2 --chapters *.md -f markdown_github -o ../$1
+pandoc -V geometry:margin=1in --highlight-style tango --toc --toc-depth=2 --chapters *.md -f markdown_github -o ../$1
 
 cd ..
 
