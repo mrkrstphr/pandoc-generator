@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: generate output-file.pdf";
+    exit 1;
+fi
+
+cd src/
+
+pandoc --highlight-style tango --toc --toc-depth=2 --chapters *.md -f markdown_github -o ../$1
+
+cd ..
+
+echo "-- [$1] generated successfully!";
+
