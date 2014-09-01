@@ -1,15 +1,54 @@
 #!/bin/bash
 
+function onFailure {
+    echo "failure"
+    exit 1;
+}
+
+trap 'onFailure' ERR;
+
 if [ $# -ne 1 ]; then
-    echo "Usage: generate output-file.pdf";
+    echo "Usage: generate output_file_name";
     exit 1;
 fi
 
+command -v pandoc >/dev/null 2>&1 || { echo >&2 "-- Error: pandoc not installed; aborting..."; exit 1; }
+
+echo ""
+echo " LET'S GENERATE A BOOK! "
+echo "                  __    "
+echo "                 / _)   "
+echo "        _.----._/ /     "
+echo "       /         /      "
+echo "    __/ (  | (  |       "
+echo "   /__.-'|_|--|_|       "
+echo "                        "
+
+# Can we generate a mobi file?
+mobi=1
+command -v kindlegen >/dev/null 2>&1 || { echo >&2 "-- Note: kindlegen not installed; no mobi for you..."; mobi=0; }
+
 cd src/
 
-pandoc -V geometry:margin=1in --highlight-style tango --toc --toc-depth=2 --chapters *.md -f markdown_github -o ../$1
+#pdf
+echo -n "-- Generating [pdf]..."
+pandoc -V geometry:margin=1in --highlight-style tango --toc --toc-depth=2 --chapters *.md -f markdown_github -o ../$1.pdf
+echo "done!"
+
+#epub
+echo -n "-- Generating [epub]..."
+#pandoc -V geometry:margin=1in --highlight-style tango --toc --toc-depth=2 --chapters *.md -f markdown_github -o ../$1.epub
+echo "done!";
 
 cd ..
 
-echo "-- [$1] generated successfully!";
+#mobi
+if [ $mobi -eq 1 ]; then
+    echo -n "-- Generating [mobi]..."
+    kindlegen $1.epub >/dev/null
+    echo "done!"
+fi
+
+echo ""
+echo "Documents generated successfully!";
 
